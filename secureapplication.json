@@ -3,7 +3,7 @@
     "name": "Secure Application",
     "description": "This app interfaces with Secure Application to add, delete and update policies defining what runtime behaviors to ignore, detect, or block. The app connects to the cloud version of Secure Application.",
     "type": "siem",
-    "product_vendor": "Cisco Systems",
+    "product_vendor": "Cisco",
     "logo": "secureapplication.svg",
     "logo_dark": "secureapplication_dark.svg",
     "product_name": "Secure Application",
@@ -269,7 +269,7 @@
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
-            ],
+             ],
             "render": {
                 "type": "table"
             },
