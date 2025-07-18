@@ -90,7 +90,6 @@
                         "Database queries",
                         "Libraries loaded at runtime",
                         "Unhandled exceptions",
-                        "Headers in http transactions",
                         "Cookies in outgoing http response",
                         "Class deserialization at runtime"
                     ],
@@ -171,63 +170,63 @@
                     "data_path": "action_result.parameter.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "type",
+                    "column_name": "Type",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.parameter.application_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "application_id",
+                    "column_name": "Application ID",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.parameter.tier_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "tier_id",
+                    "column_name": "Tier ID",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.parameter.default_action",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "default_action",
+                    "column_name": "Default Action",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.parameter.enable_policy",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "enable_policy",
+                    "column_name": "Enable Policy",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Policy ID",
                     "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "status",
+                    "column_name": "Status",
                     "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.action",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Action",
                     "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.operative_policy_type_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Operative policy type id",
+                    "column_name": "Operative Policy Type ID",
                     "column_order": 8
                 },
                 {
@@ -241,35 +240,44 @@
                     "data_path": "action_result.data.*.created_at",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Creation time",
+                    "column_name": "Creation Time",
                     "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.updated_at",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Update time",
+                    "column_name": "Update Time",
                     "column_order": 11
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
+                    "column_name": "Action Status",
                     "column_order": 12
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Message",
+                    "column_order": 13
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 14
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 15
                 }
-             ],
+            ],
             "render": {
                 "type": "table"
             },
@@ -303,26 +311,36 @@
                     "data_path": "action_result.parameter.policy_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Policy ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [],
+                    "column_name": "Status",
                     "column_order": 1
                 },
-                {
+                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Message",
+                    "column_order": 2
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 3
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 4
                 }
             ],
             "render": {
@@ -357,42 +375,42 @@
                     "data_path": "action_result.parameter.policy_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Policy ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "status",
+                    "column_name": "Status",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.action",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Action",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.configTypeId",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Config type Id",
+                    "column_name": "Config Type ID",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.configTypeName",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Config type name",
+                    "column_name": "Config Type Name",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.applicationId",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Application Id",
+                    "column_name": "Application ID",
                     "column_order": 5
                 },
                 {
@@ -406,7 +424,7 @@
                     "data_path": "action_result.data.*.tierId",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Tier Id",
+                    "column_name": "Tier ID",
                     "column_order": 7
                 },
                 {
@@ -427,7 +445,7 @@
                     "data_path": "action_result.data.*.policyTypeId",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Policy Type Id",
+                    "column_name": "Policy Type ID",
                     "column_order": 10
                 },
                 {
@@ -446,19 +464,31 @@
                 },
                 {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Message",
+                    "column_order": 13
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 14
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 15
                 },
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action status",
+                    "column_order": 16
                 }
             ],
             "render": {
@@ -478,78 +508,100 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Policy ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.status",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Status",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.action",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Action",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.applicationName",
                     "data_type": "string",
-                    "column_name": "Application",
+                    "contains": [],
+                    "column_name": "Application Name",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.applicationId",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Application ID",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.tierName",
                     "data_type": "string",
-                    "column_name": "Tier",
+                    "contains": [],
+                    "column_name": "Tier Name",
                     "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.tierId",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Tier ID",
                     "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.policyTypeName",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Policy Type",
                     "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.policyTypeDescription",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Policy Description",
                     "column_order": 8
                 },
                 {
                     "data_path": "summary.total_policies",
                     "data_type": "numeric",
+                    "contains": [],
                     "column_name": "Total Policies",
                     "column_order": 9
                 },
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action Status",
+                    "column_order": 10
+                },
+                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action Message",
+                    "column_order": 11
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 12
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 13
                 }
             ],
             "render": {
@@ -644,56 +696,63 @@
                     "data_path": "action_result.parameter.policy_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Policy ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.parameter.application_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "application_id",
+                    "column_name": "Application ID",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.parameter.tier_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "tier_id",
+                    "column_name": "Tier ID",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.parameter.default_action",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "default_action",
+                    "column_name": "Default Action",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.parameter.enable_policy",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "enable_policy",
+                    "column_name": "Enable Policy",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "status",
+                    "column_name": "Policy Status",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action Status",
                     "column_order": 6
                 },
                 {
                     "data_path": "action_result.data.*.action",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Policy Action",
                     "column_order": 7
                 },
                 {
                     "data_path": "action_result.data.*.operative_policy_type_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Operative policy type id",
+                    "column_name": "Operative Policy Type ID",
                     "column_order": 8
                 },
                 {
@@ -707,33 +766,36 @@
                     "data_path": "action_result.data.*.created_at",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Creation time",
+                    "column_name": "Created At",
                     "column_order": 10
                 },
                 {
                     "data_path": "action_result.data.*.updated_at",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "Update time",
+                    "column_name": "Updated At",
                     "column_order": 11
                 },
                 {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 5
-                },
-                {
                     "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Message",
+                    "column_order": 12
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 13
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects successful",
+                    "column_order": 14
                 }
             ],
             "render": {
@@ -829,57 +891,99 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.policy_id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Status",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.type",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "type",
+                    "column_name": "Message",
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.parameter.operation",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "operation",
+                    "column_name": "Rule Name",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.parameter.value",
+                    "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "value",
+                    "column_name": "Rule Type",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.parameter.action",
+                    "data_path": "action_result.data.*.operation",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Operation",
                     "column_order": 4
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.value",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [
+                        "process name",
+                        "command",
+                        "hostname",
+                        "file name"
+                    ],
+                    "column_name": "Value",
                     "column_order": 5
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "summary.total_rules",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Rules",
+                    "column_order": 7
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 8
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.parameter.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.operation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.action",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -975,57 +1079,99 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.policy_id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Status",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.type",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "type",
+                    "column_name": "Message",
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.parameter.operation",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "operation",
+                    "column_name": "Rule Name",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.parameter.value",
+                    "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "value",
+                    "column_name": "Rule Type",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.parameter.action",
+                    "data_path": "action_result.data.*.operation",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Operation",
                     "column_order": 4
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.value",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [
+                        "process name",
+                        "command",
+                        "hostname",
+                        "file name"
+                    ],
+                    "column_name": "Value",
                     "column_order": 5
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "summary.total_rules",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Rules",
+                    "column_order": 7
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 8
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.parameter.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.operation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.action",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -1121,57 +1267,99 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.policy_id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Status",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.type",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "type",
+                    "column_name": "Message",
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.parameter.operation",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "operation",
+                    "column_name": "Rule Name",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.parameter.value",
+                    "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "value",
+                    "column_name": "Rule Type",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.parameter.action",
+                    "data_path": "action_result.data.*.operation",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Operation",
                     "column_order": 4
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.value",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [
+                        "process name",
+                        "command",
+                        "hostname",
+                        "file name"
+                    ],
+                    "column_name": "Value",
                     "column_order": 5
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "summary.total_rules",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Rules",
+                    "column_order": 7
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 8
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.parameter.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.operation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.action",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -1267,57 +1455,99 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.policy_id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Status",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.type",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "type",
+                    "column_name": "Message",
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.parameter.operation",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "operation",
+                    "column_name": "Rule Name",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.parameter.value",
+                    "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "value",
+                    "column_name": "Rule Type",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.parameter.action",
+                    "data_path": "action_result.data.*.operation",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Operation",
                     "column_order": 4
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.value",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [
+                        "process name",
+                        "command",
+                        "hostname",
+                        "file name"
+                    ],
+                    "column_name": "Value",
                     "column_order": 5
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "summary.total_rules",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Rules",
+                    "column_order": 7
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 8
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.parameter.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.operation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.action",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -1413,57 +1643,99 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.policy_id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Status",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.type",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "type",
+                    "column_name": "Message",
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.parameter.operation",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "operation",
+                    "column_name": "Rule Name",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.parameter.value",
+                    "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "value",
+                    "column_name": "Rule Type",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.parameter.action",
+                    "data_path": "action_result.data.*.operation",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Operation",
                     "column_order": 4
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.value",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [
+                        "process name",
+                        "command",
+                        "hostname",
+                        "file name"
+                    ],
+                    "column_name": "Value",
                     "column_order": 5
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "summary.total_rules",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Rules",
+                    "column_order": 7
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 8
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.parameter.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.operation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.action",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -1559,57 +1831,99 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.parameter.policy_id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Status",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.parameter.type",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "type",
+                    "column_name": "Message",
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.parameter.operation",
+                    "data_path": "action_result.data.*.name",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "operation",
+                    "column_name": "Rule Name",
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.parameter.value",
+                    "data_path": "action_result.data.*.type",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "value",
+                    "column_name": "Rule Type",
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.parameter.action",
+                    "data_path": "action_result.data.*.operation",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "action",
+                    "column_name": "Operation",
                     "column_order": 4
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.value",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [
+                        "process name",
+                        "command",
+                        "hostname",
+                        "file name"
+                    ],
+                    "column_name": "Value",
                     "column_order": 5
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Action",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "summary.total_rules",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Rules",
+                    "column_order": 7
                 },
                 {
                     "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 8
                 },
                 {
                     "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Successful Objects",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "action_result.parameter.policy_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.operation",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.action",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -1644,56 +1958,78 @@
                     "data_path": "action_result.parameter.policy_id",
                     "data_type": "string",
                     "contains": [],
-                    "column_name": "policy_id",
+                    "column_name": "Policy ID",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "status",
+                    "contains": [],
+                    "column_name": "Action Status",
                     "column_order": 1
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.type",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Type",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.operation",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Operation",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.value",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Value",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.data.*.action",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Action",
                     "column_order": 5
                 },
                 {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string",
+                    "contains": [],
                     "column_name": "Name",
                     "column_order": 6
+                },
+                {
+                    "data_path": "summary.total_rules",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Rules",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "Message",
+                    "column_order": 8
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 9
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "contains": [],
+                    "column_name": "Total Objects",
+                    "column_order": 10
                 }
             ],
             "render": {

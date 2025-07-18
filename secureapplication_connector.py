@@ -183,10 +183,7 @@ class SecureApplicationConnector(BaseConnector):
 
         if missing:
             missing_str = ", ".join(missing)
-            return action_result.set_status(
-                phantom.APP_ERROR,
-                "Missing required parameter(s): " + missing_str
-            )
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter(s): " + missing_str)
 
         policy_type = param["type"]
         application_id = param["application_id"]
@@ -372,7 +369,15 @@ class SecureApplicationConnector(BaseConnector):
         policyType = self._policy_type_map.get("Command execution")
         status = self._send_updated_policy_with_rule_change(param, action_result, True, False, policyType)
         if phantom.is_success(status):
+            policy_id = param.get("policy_id")
+            if policy_id:
+                status, rules, _ = self._get_rules_from_policy(policy_id, action_result)
+                if phantom.is_success(status):
+                    for rule in rules:
+                        action_result.add_data(rule)
+                    action_result.update_summary({"total_rules": len(rules)})
             return action_result.set_status(status, "Rule added to Command execution policy successfully")
+
         return status
 
     def _handle_add_a_rule_to_filesystem_access_policy(self, param):
@@ -382,7 +387,15 @@ class SecureApplicationConnector(BaseConnector):
         policyType = self._policy_type_map.get("Filesystem access")
         status = self._send_updated_policy_with_rule_change(param, action_result, True, False, policyType)
         if phantom.is_success(status):
-            return action_result.set_status(status, "Rule added to filesystem access policy successfully")
+            policy_id = param.get("policy_id")
+            if policy_id:
+                status, rules, _ = self._get_rules_from_policy(policy_id, action_result)
+                if phantom.is_success(status):
+                    for rule in rules:
+                        action_result.add_data(rule)
+                    action_result.update_summary({"total_rules": len(rules)})
+            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+
         return status
 
     def _handle_add_a_rule_to_network_or_socket_access_policy(self, param):
@@ -392,7 +405,15 @@ class SecureApplicationConnector(BaseConnector):
         policyType = self._policy_type_map.get("Network or socket access")
         status = self._send_updated_policy_with_rule_change(param, action_result, True, False, policyType)
         if phantom.is_success(status):
-            return action_result.set_status(status, "Rule added to Network or socket access policy successfully")
+            policy_id = param.get("policy_id")
+            if policy_id:
+                status, rules, _ = self._get_rules_from_policy(policy_id, action_result)
+                if phantom.is_success(status):
+                    for rule in rules:
+                        action_result.add_data(rule)
+                    action_result.update_summary({"total_rules": len(rules)})
+            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+
         return status
 
     def _handle_delete_a_rule_from_command_execution_policy(self, param):
@@ -401,7 +422,15 @@ class SecureApplicationConnector(BaseConnector):
 
         status = self._send_updated_policy_with_rule_change(param, action_result, False, True, self._policy_type_map.get("Command execution"))
         if phantom.is_success(status):
-            return action_result.set_status(status, "Rule deleted from Command execution policy successfully")
+            policy_id = param.get("policy_id")
+            if policy_id:
+                status, rules, _ = self._get_rules_from_policy(policy_id, action_result)
+                if phantom.is_success(status):
+                    for rule in rules:
+                        action_result.add_data(rule)
+                    action_result.update_summary({"total_rules": len(rules)})
+            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+
         return status
 
     def _handle_delete_a_rule_from_filesystem_access_policy(self, param):
@@ -410,7 +439,15 @@ class SecureApplicationConnector(BaseConnector):
 
         status = self._send_updated_policy_with_rule_change(param, action_result, False, True, self._policy_type_map.get("Filesystem access"))
         if phantom.is_success(status):
-            return action_result.set_status(status, "Rule deleted from filesystem access policy successfully")
+            policy_id = param.get("policy_id")
+            if policy_id:
+                status, rules, _ = self._get_rules_from_policy(policy_id, action_result)
+                if phantom.is_success(status):
+                    for rule in rules:
+                        action_result.add_data(rule)
+                    action_result.update_summary({"total_rules": len(rules)})
+            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+
         return status
 
     def _handle_delete_a_rule_from_network_or_socket_access_policy(self, param):
@@ -421,7 +458,15 @@ class SecureApplicationConnector(BaseConnector):
             param, action_result, False, True, self._policy_type_map.get("Network or socket access")
         )
         if phantom.is_success(status):
-            return action_result.set_status(status, "Rule deleted from Network or socket access policy successfully")
+            policy_id = param.get("policy_id")
+            if policy_id:
+                status, rules, _ = self._get_rules_from_policy(policy_id, action_result)
+                if phantom.is_success(status):
+                    for rule in rules:
+                        action_result.add_data(rule)
+                    action_result.update_summary({"total_rules": len(rules)})
+            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+
         return status
 
     def _handle_list_all_rules(self, param):
@@ -433,60 +478,15 @@ class SecureApplicationConnector(BaseConnector):
         if not policy_id:
             return action_result.set_status(phantom.APP_ERROR, "Missing policy ID")
 
-        # Get existing policy
-        status, existing_policy = self._get_policy_by_id(policy_id, action_result)
+        status, rules, message = self._get_rules_from_policy(policy_id, action_result)
         if phantom.is_fail(status):
-            return action_result.get_status()
-
-        if not existing_policy:
-            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve existing policy")
-
-        # Get policy type
-        policy_type = existing_policy.get("policyTypeId")
-        # Parse config details
-        # Parse configDetails
-        config_details = self._decode_config_details(existing_policy.get("configDetails"))
-        self.debug_print(f"Decoded config_details:\n{json.dumps(config_details, indent=2)}")
-
-        rules = config_details.get("permission", {}).get("filter", [])
-
-        if not rules:
-            return action_result.set_status(phantom.APP_SUCCESS, "No rules found in policy")
-
-        # Reverse mapping from matchType to operation string
-        reverse_operation_map = {"EQUALS": "equals", "STARTSWITH": "starts with", "SUBSTRING": "contains", "REGEX": "matches regex"}
+            return action_result.set_status(phantom.APP_ERROR, message)
 
         for rule in rules:
-            if not ("stackMatch" in rule or "targetMatch" in rule):
-                continue
-            entry = {}
+            action_result.add_data(rule)
 
-            action = rule.get("action", "").upper()
-            entry["action"] = "ignore" if action == "NONE" else action.lower()
-
-            match = None
-            if "stackMatch" in rule:
-                entry["type"] = "stack trace"
-                match = rule["stackMatch"]
-            elif "targetMatch" in rule:
-                if self._policy_type_map.get("Command execution") == policy_type:
-                    entry["type"] = "process"
-                elif self._policy_type_map.get("Filesystem access") == policy_type:
-                    entry["type"] = "filename"
-                elif self._policy_type_map.get("Network or socket access") == policy_type:
-                    entry["type"] = "hostname"
-                match = rule["targetMatch"]
-
-            if match:
-                entry["operation"] = reverse_operation_map.get(match.get("matchType"), "unknown")
-                entry["value"] = match.get("value")
-
-            entry["name"] = rule.get("name", "")
-            action_result.add_data(entry)
-
-        summary = {"total_rules": len(rules)}
-        action_result.update_summary(summary)
-        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved rules from policy")
+        action_result.update_summary({"total_rules": len(rules)})
+        return action_result.set_status(status, message)
 
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
@@ -675,7 +675,6 @@ class SecureApplicationConnector(BaseConnector):
 
     # Helper function to  add/delete rule
     def _send_updated_policy_with_rule_change(self, param, action_result, add, delete, policyType):
-
         required_params = ["policy_id", "action", "value", "operation", "type"]
         missing = []
 
@@ -685,10 +684,7 @@ class SecureApplicationConnector(BaseConnector):
 
         if missing:
             missing_str = ", ".join(missing)
-            return action_result.set_status(
-                phantom.APP_ERROR,
-                "Missing required parameter(s): " + missing_str
-            )
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter(s): " + missing_str)
         policy_id = param["policy_id"]
         rule_action = param["action"]
         rule_value = param["value"]
@@ -762,6 +758,48 @@ class SecureApplicationConnector(BaseConnector):
 
         action_result.add_data(response)
         return phantom.APP_SUCCESS
+
+    def _get_rules_from_policy(self, policy_id, action_result):
+        status, existing_policy = self._get_policy_by_id(policy_id, action_result)
+        if phantom.is_fail(status) or not existing_policy:
+            return phantom.APP_ERROR, [], "Failed to retrieve policy"
+
+        policy_type = existing_policy.get("policyTypeId")
+        config_details = self._decode_config_details(existing_policy.get("configDetails"))
+        self.debug_print(f"Decoded config_details:\n{json.dumps(config_details, indent=2)}")
+
+        rules = config_details.get("permission", {}).get("filter", [])
+        if not rules:
+            return phantom.APP_SUCCESS, [], "No rules found in policy"
+
+        reverse_operation_map = {"EQUALS": "equals", "STARTSWITH": "starts with", "SUBSTRING": "contains", "REGEX": "matches regex"}
+
+        formatted_rules = []
+        for rule in rules:
+            if not ("stackMatch" in rule or "targetMatch" in rule):
+                continue
+
+            entry = {"name": rule.get("name", "")}
+            action = rule.get("action", "").upper()
+            entry["action"] = "ignore" if action == "NONE" else action.lower()
+
+            match = rule.get("stackMatch") or rule.get("targetMatch")
+            if "stackMatch" in rule:
+                entry["type"] = "stack trace"
+            elif "targetMatch" in rule:
+                if self._policy_type_map.get("Command execution") == policy_type:
+                    entry["type"] = "process"
+                elif self._policy_type_map.get("Filesystem access") == policy_type:
+                    entry["type"] = "filename"
+                elif self._policy_type_map.get("Network or socket access") == policy_type:
+                    entry["type"] = "hostname"
+
+            entry["operation"] = reverse_operation_map.get(match.get("matchType"), "unknown")
+            entry["value"] = match.get("value")
+
+            formatted_rules.append(entry)
+
+        return phantom.APP_SUCCESS, formatted_rules, "Successfully retrieved rules from policy"
 
     def _get_authentication_token(self, url, account, api_key, api_secret):
         # Load the saved token to check its ttl to see if it can be used
