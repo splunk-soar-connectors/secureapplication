@@ -87,6 +87,8 @@ action_result.data.\*.created_at | string | | |
 action_result.data.\*.updated_at | string | | |
 action_result.status | string | | |
 action_result.message | string | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
 
@@ -112,6 +114,8 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.parameter.policy_id | string | | |
 action_result.status | string | | |
 action_result.message | string | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
 
@@ -148,9 +152,11 @@ action_result.data.\*.policyTypeId | string | | |
 action_result.data.\*.policyTypeName | string | | |
 action_result.data.\*.policyTypeDescription | string | | |
 action_result.message | string | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
+action_result.status | string | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
 
 ## action: 'list all policies'
 
@@ -178,9 +184,11 @@ action_result.data.\*.tierName | string | | |
 action_result.data.\*.tierId | string | | |
 action_result.data.\*.policyTypeName | string | | |
 action_result.data.\*.policyTypeDescription | string | | |
-summary.total_policies | numeric | | |
+action_result.summary.total_policies | numeric | | |
 action_result.status | string | | |
 action_result.message | string | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
 
@@ -220,6 +228,8 @@ action_result.data.\*.version | string | | |
 action_result.data.\*.created_at | string | | |
 action_result.data.\*.updated_at | string | | |
 action_result.message | string | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
 
@@ -252,16 +262,18 @@ action_result.message | string | | |
 action_result.data.\*.name | string | | |
 action_result.data.\*.type | string | | |
 action_result.data.\*.operation | string | | |
-action_result.data.\*.value | string | `process name` `command` `hostname` `file name` | |
+action_result.data.\*.value | string | | |
 action_result.data.\*.action | string | | |
-summary.total_rules | numeric | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.total_rules | numeric | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 action_result.parameter.policy_id | string | | |
 action_result.parameter.type | string | | |
 action_result.parameter.operation | string | | |
 action_result.parameter.value | string | | |
 action_result.parameter.action | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'add a rule to filesystem access policy'
 
@@ -292,16 +304,18 @@ action_result.message | string | | |
 action_result.data.\*.name | string | | |
 action_result.data.\*.type | string | | |
 action_result.data.\*.operation | string | | |
-action_result.data.\*.value | string | `process name` `command` `hostname` `file name` | |
+action_result.data.\*.value | string | | |
 action_result.data.\*.action | string | | |
-summary.total_rules | numeric | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.total_rules | numeric | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 action_result.parameter.policy_id | string | | |
 action_result.parameter.type | string | | |
 action_result.parameter.operation | string | | |
 action_result.parameter.value | string | | |
 action_result.parameter.action | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'add a rule to network or socket access policy'
 
@@ -332,16 +346,18 @@ action_result.message | string | | |
 action_result.data.\*.name | string | | |
 action_result.data.\*.type | string | | |
 action_result.data.\*.operation | string | | |
-action_result.data.\*.value | string | `process name` `command` `hostname` `file name` | |
+action_result.data.\*.value | string | | |
 action_result.data.\*.action | string | | |
-summary.total_rules | numeric | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.total_rules | numeric | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 action_result.parameter.policy_id | string | | |
 action_result.parameter.type | string | | |
 action_result.parameter.operation | string | | |
 action_result.parameter.value | string | | |
 action_result.parameter.action | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'delete a rule from command execution policy'
 
@@ -371,16 +387,18 @@ action_result.message | string | | |
 action_result.data.\*.name | string | | |
 action_result.data.\*.type | string | | |
 action_result.data.\*.operation | string | | |
-action_result.data.\*.value | string | `process name` `command` `hostname` `file name` | |
+action_result.data.\*.value | string | | |
 action_result.data.\*.action | string | | |
-summary.total_rules | numeric | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.total_rules | numeric | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 action_result.parameter.policy_id | string | | |
 action_result.parameter.type | string | | |
 action_result.parameter.operation | string | | |
 action_result.parameter.value | string | | |
 action_result.parameter.action | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'delete a rule from filesystem access policy'
 
@@ -410,16 +428,18 @@ action_result.message | string | | |
 action_result.data.\*.name | string | | |
 action_result.data.\*.type | string | | |
 action_result.data.\*.operation | string | | |
-action_result.data.\*.value | string | `process name` `command` `hostname` `file name` | |
+action_result.data.\*.value | string | | |
 action_result.data.\*.action | string | | |
-summary.total_rules | numeric | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.total_rules | numeric | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 action_result.parameter.policy_id | string | | |
 action_result.parameter.type | string | | |
 action_result.parameter.operation | string | | |
 action_result.parameter.value | string | | |
 action_result.parameter.action | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'delete a rule from network or socket access policy'
 
@@ -449,16 +469,18 @@ action_result.message | string | | |
 action_result.data.\*.name | string | | |
 action_result.data.\*.type | string | | |
 action_result.data.\*.operation | string | | |
-action_result.data.\*.value | string | `process name` `command` `hostname` `file name` | |
+action_result.data.\*.value | string | | |
 action_result.data.\*.action | string | | |
-summary.total_rules | numeric | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.total_rules | numeric | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 action_result.parameter.policy_id | string | | |
 action_result.parameter.type | string | | |
 action_result.parameter.operation | string | | |
 action_result.parameter.value | string | | |
 action_result.parameter.action | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'list all rules'
 
@@ -486,8 +508,10 @@ action_result.data.\*.operation | string | | |
 action_result.data.\*.value | string | | |
 action_result.data.\*.action | string | | |
 action_result.data.\*.name | string | | |
-summary.total_rules | numeric | | |
+action_result.summary.total_rules | numeric | | |
 action_result.message | string | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
 

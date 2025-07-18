@@ -299,6 +299,10 @@ class SecureApplicationConnector(BaseConnector):
             offset += limit
 
         for policy in all_policies:
+            if policy.get("applicationId") is None or str(policy["applicationId"]).lower() in ["null", "none", ""]:
+                policy["applicationId"] = "All"
+            if policy.get("tierId") is None or str(policy["tierId"]).lower() in ["null", "none", ""]:
+                policy["tierId"] = "All"
             action_result.add_data(policy)
 
         action_result.set_summary({"total_policies": len(all_policies)})
@@ -756,7 +760,7 @@ class SecureApplicationConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        action_result.add_data(response)
+        # action_result.add_data(response)
         return phantom.APP_SUCCESS
 
     def _get_rules_from_policy(self, policy_id, action_result):
