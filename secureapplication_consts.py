@@ -13,11 +13,5 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 
-# API endpoints
-SECUREAPPLICATION_CONNECTIVITY_ENDPOINT = "/endpoint/to/test/connectivity"
-
-# Error messages
-SECUREAPPLICATION_ERR_CONNECTIVITY_TEST = "Test Connectivity Failed"
-
-# Success messages
-SECUREAPPLICATION_SUCC_CONNECTIVITY_TEST = "Test Connectivity Passed"
+ENDPOINT_PREFIX = "/controller/argento/public-api/v1/"
+POLICYCONFIGS_ENDPOINT_PREFIX = "/controller/argento/public-api/v1/policyConfigs"

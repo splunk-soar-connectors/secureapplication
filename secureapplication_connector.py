@@ -11,23 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#!/usr/bin/python
-# -----------------------------------------
-# Phantom sample App Connector python file
-# -----------------------------------------
+
+# Secure Application Connector
 
 # Phantom App imports
 import json
 import time
 
 import phantom.app as phantom
-
-# Usage of the consts file is recommended
-# from secureapplication_consts import *
 import requests
 from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+
+from secureapplication_consts import *
 
 
 class RetVal(tuple):
@@ -61,7 +58,7 @@ class SecureApplicationConnector(BaseConnector):
         if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
+        return RetVal(action_result.set_status(phantom.APP_ERROR, f"Empty response and no information in the header"), None)
 
     def _process_html_response(self, response, action_result):
         # An html response, treat it like an error
@@ -88,7 +85,6 @@ class SecureApplicationConnector(BaseConnector):
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, f"Unable to parse JSON response. Error: {e!s}"), None)
 
-        # Please specify the status codes here
         if 200 <= r.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
@@ -157,7 +153,7 @@ class SecureApplicationConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        endpoint = "/controller/argento/public-api/v1/libraries"
+        endpoint = ENDPOINT_PREFIX + "libraries"
         headers = self._get_rest_api_headers(token=self._token)
 
         # make REST call - list all libaries
@@ -168,7 +164,7 @@ class SecureApplicationConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        return action_result.set_status(phantom.APP_SUCCESS, "Test connectivity successful")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Test connectivity successful")
 
     def _handle_create_new_policy(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
@@ -183,7 +179,7 @@ class SecureApplicationConnector(BaseConnector):
 
         if missing:
             missing_str = ", ".join(missing)
-            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter(s): " + missing_str)
+            return action_result.set_status(phantom.APP_ERROR, f"Missing required parameter({missing_str})")
 
         policy_type = param["type"]
         application_id = param["application_id"]
@@ -211,12 +207,9 @@ class SecureApplicationConnector(BaseConnector):
             "operativePolicyTypeId": policy_type_id,
         }
 
-        self.debug_print(f"Payload being sent:\n{json.dumps(payload, indent=2)}")
-
         headers = self._get_rest_api_headers(token=self._token)
         # make rest call
-        endpoint = "/controller/argento/public-api/v1/policyConfigs"
-        ret_val, response = self._make_rest_call(endpoint, action_result, json=payload, headers=headers, method="post")
+        ret_val, response = self._make_rest_call(POLICYCONFIGS_ENDPOINT_PREFIX, action_result, json=payload, headers=headers, method="post")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -230,9 +223,9 @@ class SecureApplicationConnector(BaseConnector):
 
         policy_id = param.get("policy_id")
         if not policy_id:
-            return action_result.set_status(phantom.APP_ERROR, "Missing or empty 'policy_id' parameter")
+            return action_result.set_status(phantom.APP_ERROR, f"Missing or empty 'policy_id' parameter")
 
-        endpoint = f"/controller/argento/public-api/v1/policyConfigs/{policy_id}"
+        endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
         headers = self._get_rest_api_headers(token=self._token)
         # REST CALL - delete
         ret_val, response = self._make_rest_call(endpoint, action_result, headers=headers, method="delete")
@@ -240,11 +233,8 @@ class SecureApplicationConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        if self._debug:
-            self.debug_print(f"Delete policy response: {response}")
-
         action_result.add_data({"message": "Policy deleted successfully", "policy_id": policy_id})
-        return action_result.set_status(phantom.APP_SUCCESS, "Policy deleted successfully.")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Policy deleted successfully.")
 
     def _handle_get_policy_by_id(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
@@ -252,7 +242,7 @@ class SecureApplicationConnector(BaseConnector):
 
         policy_id = param.get("policy_id")
         if not policy_id:
-            return action_result.set_status(phantom.APP_ERROR, "Missing or empty 'policy_id' parameter")
+            return action_result.set_status(phantom.APP_ERROR, f"Missing or empty 'policy_id' parameter")
 
         ret_val, response = self._get_policy_by_id(policy_id, action_result)
 
@@ -263,13 +253,12 @@ class SecureApplicationConnector(BaseConnector):
             self.debug_print(f"Delete policy response: {response}")
 
         action_result.add_data(response)
-        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved policy")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Successfully retrieved policy")
 
     def _handle_list_policies(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        endpoint = "/controller/argento/public-api/v1/policyConfigs"
         headers = self._get_rest_api_headers(token=self._token)
 
         limit = 10  # Adjust based on API default or max
@@ -279,14 +268,14 @@ class SecureApplicationConnector(BaseConnector):
 
         while True:
             self.debug_print(f"Fetching policies with offset {offset} and limit {limit}")
-            url = f"{endpoint}?limit={limit}&offset={offset}"
+            url = f"{POLICYCONFIGS_ENDPOINT_PREFIX}?limit={limit}&offset={offset}"
             ret_val, response = self._make_rest_call(url, action_result, headers=headers, method="get")
 
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
 
             if not isinstance(response, dict):
-                return action_result.set_status(phantom.APP_ERROR, "Unexpected API response format")
+                return action_result.set_status(phantom.APP_ERROR, f"Unexpected API response format")
             items = response.get("items", [])
             total = response.get("total", total)
 
@@ -306,7 +295,7 @@ class SecureApplicationConnector(BaseConnector):
             action_result.add_data(policy)
 
         action_result.set_summary({"total_policies": len(all_policies)})
-        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved policies")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Successfully retrieved policies")
 
     def _handle_update_policy(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
@@ -314,7 +303,7 @@ class SecureApplicationConnector(BaseConnector):
 
         policy_id = param.get("policy_id")
         if not policy_id:
-            return action_result.set_status(phantom.APP_ERROR, "Missing 'policy_id' parameter")
+            return action_result.set_status(phantom.APP_ERROR, f"Missing 'policy_id' parameter")
 
         enable_policy = param.get("enable_policy")
         if enable_policy:
@@ -326,7 +315,7 @@ class SecureApplicationConnector(BaseConnector):
             return action_result.get_status()
 
         if not existing_policy:
-            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve existing policy")
+            return action_result.set_status(phantom.APP_ERROR, f"Failed to retrieve existing policy")
 
         updated_policy = existing_policy.copy()
 
@@ -351,11 +340,8 @@ class SecureApplicationConnector(BaseConnector):
                 updated_policy["applicationId"] = None
 
         # rest call - update policy
-        endpoint = f"/controller/argento/public-api/v1/policyConfigs/{policy_id}"
+        endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
         headers = self._get_rest_api_headers(token=self._token)
-
-        self.debug_print(f"Sending payload: {json.dumps(updated_policy, indent=2)}")
-        self.debug_print(f"Params received:\n{json.dumps(param, indent=2)}")
 
         ret_val, response = self._make_rest_call(endpoint, action_result, json=updated_policy, headers=headers, method="patch")
 
@@ -364,7 +350,7 @@ class SecureApplicationConnector(BaseConnector):
 
         action_result.add_data(response)
         action_result.set_summary({"updated_policy_id": policy_id})
-        return action_result.set_status(phantom.APP_SUCCESS, "Policy updated successfully")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Policy updated successfully")
 
     def _handle_add_a_rule_to_command_execution_policy(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
@@ -380,7 +366,7 @@ class SecureApplicationConnector(BaseConnector):
                     for rule in rules:
                         action_result.add_data(rule)
                     action_result.update_summary({"total_rules": len(rules)})
-            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+            return action_result.set_status(status, f"Rule added to Command execution policy successfully")
 
         return status
 
@@ -398,7 +384,7 @@ class SecureApplicationConnector(BaseConnector):
                     for rule in rules:
                         action_result.add_data(rule)
                     action_result.update_summary({"total_rules": len(rules)})
-            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+            return action_result.set_status(status, f"Rule added to Command execution policy successfully")
 
         return status
 
@@ -416,7 +402,7 @@ class SecureApplicationConnector(BaseConnector):
                     for rule in rules:
                         action_result.add_data(rule)
                     action_result.update_summary({"total_rules": len(rules)})
-            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+            return action_result.set_status(status, f"Rule added to Command execution policy successfully")
 
         return status
 
@@ -433,7 +419,7 @@ class SecureApplicationConnector(BaseConnector):
                     for rule in rules:
                         action_result.add_data(rule)
                     action_result.update_summary({"total_rules": len(rules)})
-            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+            return action_result.set_status(status, f"Rule added to Command execution policy successfully")
 
         return status
 
@@ -450,7 +436,7 @@ class SecureApplicationConnector(BaseConnector):
                     for rule in rules:
                         action_result.add_data(rule)
                     action_result.update_summary({"total_rules": len(rules)})
-            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+            return action_result.set_status(status, f"Rule added to Command execution policy successfully")
 
         return status
 
@@ -469,7 +455,7 @@ class SecureApplicationConnector(BaseConnector):
                     for rule in rules:
                         action_result.add_data(rule)
                     action_result.update_summary({"total_rules": len(rules)})
-            return action_result.set_status(status, "Rule added to Command execution policy successfully")
+            return action_result.set_status(status, f"Rule added to Command execution policy successfully")
 
         return status
 
@@ -491,55 +477,6 @@ class SecureApplicationConnector(BaseConnector):
 
         action_result.update_summary({"total_rules": len(rules)})
         return action_result.set_status(status, message)
-
-    def handle_action(self, param):
-        ret_val = phantom.APP_SUCCESS
-
-        # Get the action that we are supposed to execute for this App Run
-        action_id = self.get_action_identifier()
-
-        self.debug_print("action_id", self.get_action_identifier())
-
-        if action_id == "create_new_policy":
-            ret_val = self._handle_create_new_policy(param)
-
-        if action_id == "delete_policy":
-            ret_val = self._handle_delete_policy(param)
-
-        if action_id == "get_policy_by_id":
-            ret_val = self._handle_get_policy_by_id(param)
-
-        if action_id == "list_policies":
-            ret_val = self._handle_list_policies(param)
-
-        if action_id == "update_policy":
-            ret_val = self._handle_update_policy(param)
-
-        if action_id == "add_a_rule_to_command_execution_policy":
-            ret_val = self._handle_add_a_rule_to_command_execution_policy(param)
-
-        if action_id == "add_a_rule_to_filesystem_access_policy":
-            ret_val = self._handle_add_a_rule_to_filesystem_access_policy(param)
-
-        if action_id == "add_a_rule_to_network_or_socket_access_policy":
-            ret_val = self._handle_add_a_rule_to_network_or_socket_access_policy(param)
-
-        if action_id == "delete_a_rule_from_command_execution_policy":
-            ret_val = self._handle_delete_a_rule_from_command_execution_policy(param)
-
-        if action_id == "delete_a_rule_from_filesystem_access_policy":
-            ret_val = self._handle_delete_a_rule_from_filesystem_access_policy(param)
-
-        if action_id == "delete_a_rule_from_network_or_socket_access_policy":
-            ret_val = self._handle_delete_a_rule_from_network_or_socket_access_policy(param)
-
-        if action_id == "list_all_rules":
-            ret_val = self._handle_list_all_rules(param)
-
-        if action_id == "test_connectivity":
-            ret_val = self._handle_test_connectivity(param)
-
-        return ret_val
 
     def initialize(self):
         # Load the state in initialize, use it to store data
@@ -574,33 +511,8 @@ class SecureApplicationConnector(BaseConnector):
         self.save_state(self._state)
         return phantom.APP_SUCCESS
 
-    # Helper function to get policy by ID
-    # Disabling it till this api is available in fusion
-    """
     def _get_policy_by_id(self, policy_id, action_result):
-
-        endpoint = f"/v1/policyConfigs/{policy_id}"
-
-        headers = self._get_rest_api_headers(token=self._token)
-
-        ret_val, response = self._make_rest_call(
-            endpoint,
-            action_result,
-            headers=headers,
-            method="get"
-        )
-
-        if phantom.is_fail(ret_val):
-            return action_result.get_status(), None
-
-        return phantom.APP_SUCCESS, response
-    """
-
-    def _get_policy_by_id(self, policy_id, action_result):
-        return self._get_policy_by_id_from_list(policy_id, action_result)
-
-    def _get_policy_by_id_from_list(self, policy_id, action_result):
-        endpoint = f"/controller/argento/public-api/v1/policyConfigs"
+        endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
 
         headers = self._get_rest_api_headers(token=self._token)
 
@@ -609,10 +521,20 @@ class SecureApplicationConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
+        return phantom.APP_SUCCESS, response
+
+    def _get_policy_by_id_from_list(self, policy_id, action_result):
+        headers = self._get_rest_api_headers(token=self._token)
+
+        ret_val, response = self._make_rest_call(POLICYCONFIGS_ENDPOINT_PREFIX, action_result, headers=headers, method="get")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status(), None
+
         policies = response.get("items")
 
         if not isinstance(policies, list):
-            return action_result.set_status(phantom.APP_ERROR, "Unexpected response format while retrieving policies"), None
+            return action_result.set_status(phantom.APP_ERROR, f"Unexpected response format while retrieving policies"), None
 
         for policy in policies:
             if policy.get("id") == policy_id:
@@ -634,11 +556,8 @@ class SecureApplicationConnector(BaseConnector):
     # Helper function to delete a rule from configDetails
     # {\"permission\":{\"filter\":[{\"action\":\"DETECT\",\"targetMatch\":      {\"matchType\":\"EQUALS\",\"value\":\"aaaaaaa.exe\"},\"name\":\"detect aaaaaaa.exe\"}]}}
     def _delete_rule_from_config(self, config_dict, rule_to_delete):
-        self.debug_print("[_delete_rule_from_config] called")
-        self.debug_print(f"rules:\n{json.dumps(config_dict, indent=2)}")
 
         filters = config_dict.get("permission", {}).get("filter", [])
-        self.debug_print(f"filters:\n{json.dumps(filters, indent=2)}")
         updated_filters = []
         rule_found = False
 
@@ -665,7 +584,6 @@ class SecureApplicationConnector(BaseConnector):
                 and rule_filter.get("value") == delete_rule_filter.get("value")
             ):
                 rule_found = True
-                self.debug_print("Rule matched and will be deleted.")
                 continue
 
             updated_filters.append(rule)
@@ -688,7 +606,7 @@ class SecureApplicationConnector(BaseConnector):
 
         if missing:
             missing_str = ", ".join(missing)
-            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter(s): " + missing_str)
+            return action_result.set_status(phantom.APP_ERROR, f"Missing required parameter({missing_str})")
         policy_id = param["policy_id"]
         rule_action = param["action"]
         rule_value = param["value"]
@@ -701,10 +619,10 @@ class SecureApplicationConnector(BaseConnector):
             return action_result.get_status()
 
         if not existing_policy:
-            return action_result.set_status(phantom.APP_ERROR, "Failed to retrieve existing policy")
+            return action_result.set_status(phantom.APP_ERROR, f"Failed to retrieve existing policy")
 
         if existing_policy["policyTypeId"] != policyType:
-            return action_result.set_status(phantom.APP_ERROR, "Incorrect action chosen for the policy type")
+            return action_result.set_status(phantom.APP_ERROR, f"Incorrect action chosen for the policy type")
 
         # Parse configDetails
         config_details = self._decode_config_details(existing_policy.get("configDetails"))
@@ -719,11 +637,7 @@ class SecureApplicationConnector(BaseConnector):
         match_field = None
         if rule_type == "stack trace":
             match_field = "stackMatch"
-        elif rule_type == "filename":
-            match_field = "targetMatch"
-        elif rule_type == "hostname":
-            match_field = "targetMatch"
-        elif rule_type == "process":
+        elif rule_type in ("filename", "hostname", "process"):
             match_field = "targetMatch"
         else:
             return action_result.set_status(phantom.APP_ERROR, f"Unsupported rule type: {rule_type}")
@@ -743,16 +657,15 @@ class SecureApplicationConnector(BaseConnector):
             # Delete a rule from the json dict retrieved for configDetails
             updated_config, rule_found = self._delete_rule_from_config(config_details, rule)
             if not rule_found:
-                action_result.set_status(phantom.APP_ERROR, "Specified rule not found in config")
+                action_result.set_status(phantom.APP_ERROR, f"Specified rule not found in config")
                 return action_result.get_status()
 
         # Encode configDetails dict into json
         existing_policy["configDetails"] = self._encode_config_details(updated_config)
 
         # Patch the updated policy
-        endpoint = f"/controller/argento/public-api/v1/policyConfigs/{policy_id}"
+        endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
         headers = self._get_rest_api_headers(token=self._token)
-
         self.debug_print(f"Sending updated policy:\n{json.dumps(existing_policy, indent=2)}")
 
         ret_val, response = self._make_rest_call(endpoint, action_result, json=existing_policy, headers=headers, method="patch")
@@ -766,15 +679,14 @@ class SecureApplicationConnector(BaseConnector):
     def _get_rules_from_policy(self, policy_id, action_result):
         status, existing_policy = self._get_policy_by_id(policy_id, action_result)
         if phantom.is_fail(status) or not existing_policy:
-            return phantom.APP_ERROR, [], "Failed to retrieve policy"
+            return (phantom.APP_ERROR, [], f"Failed to retrieve policy")
 
         policy_type = existing_policy.get("policyTypeId")
         config_details = self._decode_config_details(existing_policy.get("configDetails"))
-        self.debug_print(f"Decoded config_details:\n{json.dumps(config_details, indent=2)}")
 
         rules = config_details.get("permission", {}).get("filter", [])
         if not rules:
-            return phantom.APP_SUCCESS, [], "No rules found in policy"
+            return (phantom.APP_SUCCESS, [], f"No rules found in policy")
 
         reverse_operation_map = {"EQUALS": "equals", "STARTSWITH": "starts with", "SUBSTRING": "contains", "REGEX": "matches regex"}
 
@@ -803,7 +715,7 @@ class SecureApplicationConnector(BaseConnector):
 
             formatted_rules.append(entry)
 
-        return phantom.APP_SUCCESS, formatted_rules, "Successfully retrieved rules from policy"
+        return (phantom.APP_SUCCESS, formatted_rules, f"Successfully retrieved rules from policy")
 
     def _get_authentication_token(self, url, account, api_key, api_secret):
         # Load the saved token to check its ttl to see if it can be used
@@ -841,7 +753,7 @@ class SecureApplicationConnector(BaseConnector):
         token = r_json["access_token"]
         expires = r_json.get("expires_in", 1800)
         if not token:
-            raise Exception("Token response received, but access_token is missing")
+            raise Exception(f"Token response received, but access_token is missing")
 
         # Set new token and expiry with buffer (60 seconds)
         expiry = current_time + int(expires) - 60
@@ -860,52 +772,46 @@ class SecureApplicationConnector(BaseConnector):
 
         return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
+    def handle_action(self, param):
+        ret_val = phantom.APP_SUCCESS
+
+        # Get the action that we are supposed to execute for this App Run
+        action_id = self.get_action_identifier()
+
+        action_mapping = {
+            "create_new_policy": self._handle_create_new_policy,
+            "delete_policy": self._handle_delete_policy,
+            "get_policy_by_id": self._handle_get_policy_by_id,
+            "list_policies": self._handle_list_policies,
+            "update_policy": self._handle_update_policy,
+            "add_a_rule_to_command_execution_policy": self._handle_add_a_rule_to_command_execution_policy,
+            "add_a_rule_to_filesystem_access_policy": self._handle_add_a_rule_to_filesystem_access_policy,
+            "add_a_rule_to_network_or_socket_access_policy": self._handle_add_a_rule_to_network_or_socket_access_policy,
+            "delete_a_rule_from_command_execution_policy": self._handle_delete_a_rule_from_command_execution_policy,
+            "delete_a_rule_from_filesystem_access_policy": self._handle_delete_a_rule_from_filesystem_access_policy,
+            "delete_a_rule_from_network_or_socket_access_policy": self._handle_delete_a_rule_from_network_or_socket_access_policy,
+            "list_all_rules": self._handle_list_all_rules,
+            "test_connectivity": self._handle_test_connectivity,
+        }
+
+        action = self.get_action_identifier()
+        action_execution_status = phantom.APP_SUCCESS
+
+        action_keys = list(action_mapping.keys())
+        if action in action_keys:
+            action_function = action_mapping[action]
+            action_execution_status = action_function(param)
+
+        return ret_val
+
 
 def main():
     import argparse
 
     argparser = argparse.ArgumentParser()
-
     argparser.add_argument("input_test_json", help="Input Test JSON file")
-    argparser.add_argument("-u", "--username", help="username", required=False)
-    argparser.add_argument("-p", "--password", help="password", required=False)
 
     args = argparser.parse_args()
-    session_id = None
-
-    username = args.username
-    password = args.password
-
-    if username is not None and password is None:
-        # User specified a username but not a password, so ask
-        import getpass
-
-        password = getpass.getpass("Password: ")
-
-    if username and password:
-        try:
-            login_url = SecureApplicationConnector._get_phantom_base_url() + "/login"
-
-            print("Accessing the Login page")
-            r = requests.get(login_url, verify=False)
-            csrftoken = r.cookies["csrftoken"]
-
-            data = dict()
-            data["username"] = username
-            data["password"] = password
-            data["csrfmiddlewaretoken"] = csrftoken
-
-            headers = dict()
-            headers["Cookie"] = "csrftoken=" + csrftoken
-            headers["Referer"] = login_url
-
-            print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
-            session_id = r2.cookies["sessionid"]
-        except Exception as e:
-            print("Unable to get session id from the platform. Error: " + str(e))
-            exit(1)
-
     with open(args.input_test_json) as f:
         in_json = f.read()
         in_json = json.loads(in_json)
@@ -913,10 +819,6 @@ def main():
 
         connector = SecureApplicationConnector()
         connector.print_progress_message = True
-
-        if session_id is not None:
-            in_json["user_session_token"] = session_id
-            connector._set_csrf_info(csrftoken, headers["Referer"])
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
