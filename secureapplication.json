@@ -29,7 +29,7 @@
             "id": 0
         },
         "account_id": {
-            "description": "Account Name, first part of SAAS URL Host Name, and usually 'customer1' for on premise",
+            "description": "Account Name, first part of SAAS URL Host Name",
             "data_type": "string",
             "required": true,
             "value_list": [],

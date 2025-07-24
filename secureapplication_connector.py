@@ -24,7 +24,10 @@ from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from secureapplication_consts import *
+from secureapplication_consts import (
+    POLICYCONFIGS_ENDPOINT_PREFIX,
+    ENDPOINT_PREFIX
+)
 
 
 class RetVal(tuple):
@@ -117,7 +120,7 @@ class SecureApplicationConnector(BaseConnector):
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
-        message = "Can't process response from server. Status Code: {} Data from server: {}".format(
+        message = "Error: Status Code: {} Data from server: {}".format(
             r.status_code, r.text.replace("{", "{{").replace("}", "}}")
         )
 
@@ -478,38 +481,6 @@ class SecureApplicationConnector(BaseConnector):
         action_result.update_summary({"total_rules": len(rules)})
         return action_result.set_status(status, message)
 
-    def initialize(self):
-        # Load the state in initialize, use it to store data
-        # that needs to be accessed across actions
-        self._state = self.load_state()
-
-        # get the asset config
-        config = self.get_config()
-        """
-        # Access values in asset config by the name
-
-        # Required values can be accessed directly
-        required_config_name = config['required_config_name']
-
-        # Optional values should use the .get() function
-        optional_config_name = config.get('optional_config_name')
-        """
-
-        self._base_url = config.get("base_url")
-        self._account_id = config.get("account_id")
-        self._api_key = config.get("api_key")
-        self._api_key_secret = config.get("api_key_secret")
-        self._token = None
-
-        # debug turned on to connect to CI environment
-        self._debug = False
-
-        return phantom.APP_SUCCESS
-
-    def finalize(self):
-        # Save the state, this data is saved across actions and app upgrades
-        self.save_state(self._state)
-        return phantom.APP_SUCCESS
 
     def _get_policy_by_id(self, policy_id, action_result):
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
@@ -632,7 +603,7 @@ class SecureApplicationConnector(BaseConnector):
 
         match_type = operation_map.get(rule_operation.lower())
         if match_type is None:
-            raise ValueError(f"Unsupported match operation: {rule_operation}")
+            return action_result.set_status(phantom.APP_ERROR, f"Unsupported match operation: {rule_operation}")
 
         match_field = None
         if rule_type == "stack trace":
@@ -803,6 +774,30 @@ class SecureApplicationConnector(BaseConnector):
             action_execution_status = action_function(param)
 
         return ret_val
+
+    def initialize(self):
+        # Load the state in initialize, use it to store data
+        # that needs to be accessed across actions
+        self._state = self.load_state()
+
+        # get the asset config
+        config = self.get_config()
+
+        self._base_url = config.get("base_url")
+        self._account_id = config.get("account_id")
+        self._api_key = config.get("api_key")
+        self._api_key_secret = config.get("api_key_secret")
+        self._token = None
+
+        # debug turned on to connect to CI environment
+        self._debug = False
+
+        return phantom.APP_SUCCESS
+
+    def finalize(self):
+        # Save the state, this data is saved across actions and app upgrades
+        self.save_state(self._state)
+        return phantom.APP_SUCCESS
 
 
 def main():
