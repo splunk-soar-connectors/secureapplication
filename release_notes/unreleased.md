@@ -1,3 +1,3 @@
 **Unreleased**
 
-* fix: Workflow file updates
+* App release
