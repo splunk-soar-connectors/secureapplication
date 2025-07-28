@@ -12,7 +12,7 @@
     "publisher": "Cisco Systems",
     "license": "Copyright (c) Cisco Systems, 2025",
     "app_version": "1.0.0",
-    "utctime_updated": "2025-07-11T08:00:07.328223Z",
+    "utctime_updated": "2025-07-28T18:23:11.814498Z",
     "package_name": "phantom_secureapplication",
     "main_module": "secureapplication_connector.py",
     "min_phantom_version": "6.4.0.85",
