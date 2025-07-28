@@ -24,10 +24,7 @@ from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from secureapplication_consts import (
-    POLICYCONFIGS_ENDPOINT_PREFIX,
-    ENDPOINT_PREFIX
-)
+from secureapplication_consts import ENDPOINT_PREFIX, POLICYCONFIGS_ENDPOINT_PREFIX
 
 
 class RetVal(tuple):
@@ -120,9 +117,7 @@ class SecureApplicationConnector(BaseConnector):
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
-        message = "Error: Status Code: {} Data from server: {}".format(
-            r.status_code, r.text.replace("{", "{{").replace("}", "}}")
-        )
+        message = "Error: Status Code: {} Data from server: {}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -208,6 +203,86 @@ class SecureApplicationConnector(BaseConnector):
             "status": status,
             "policyTypeId": policy_type_id,
             "operativePolicyTypeId": policy_type_id,
+        }
+
+        headers = self._get_rest_api_headers(token=self._token)
+        # make rest call
+        ret_val, response = self._make_rest_call(POLICYCONFIGS_ENDPOINT_PREFIX, action_result, json=payload, headers=headers, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_create_new_policy_for_http_transaction_header(self, param):
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        required_params = ["application_id", "tier_id", "default_action", "enable_policy"]
+        missing = []
+
+        for p in required_params:
+            if not param.get(p):
+                missing.append(p)
+
+        if missing:
+            missing_str = ", ".join(missing)
+            return action_result.set_status(phantom.APP_ERROR, f"Missing required parameter({missing_str})")
+
+        policy_type = "Headers in http transactions"
+        policy_type_id = self._policy_type_map.get(policy_type)
+
+        application_id = param["application_id"]
+        if application_id.lower() == "all":
+            application_id = None
+
+        tier_id = param["tier_id"]
+        if tier_id.lower() == "all":
+            tier_id = None
+
+        default_action = param["default_action"]
+        if default_action.lower() == "ignore":
+            default_action = "NONE"
+
+        enable_policy = param["enable_policy"]
+        status = "ON" if enable_policy.upper() == "YES" else "OFF"
+
+        headers_to_check = ["Strict-Transport-Security", "X-Frame-Options", "X-XSS-Protection", "X-Content-Type-Options"]
+
+        config_rules = []
+        for header in headers_to_check:
+            action_key = f"action for {header}"
+            patch_key = f"patch value for {header}"
+
+            rule_action = param.get(action_key)
+            patch_value = param.get(patch_key)
+
+            if not rule_action:
+                rule_action = "DETECT"
+
+            if rule_action.lower() == "ignore":
+                rule_action = "NONE"
+            else:
+                rule_action = rule_action.upper()
+
+            rule = {
+                "action": rule_action,
+                "header": header,
+                "value": patch_value,
+            }
+            config_rules.append(rule)
+
+        config_details = {"header": {"header": config_rules}}
+
+        payload = {
+            "action": default_action,
+            "applicationId": application_id,
+            "tierId": tier_id,
+            "status": status,
+            "policyTypeId": policy_type_id,
+            "operativePolicyTypeId": policy_type_id,
+            "configDetails": self._encode_config_details(config_details),
         }
 
         headers = self._get_rest_api_headers(token=self._token)
@@ -481,7 +556,6 @@ class SecureApplicationConnector(BaseConnector):
         action_result.update_summary({"total_rules": len(rules)})
         return action_result.set_status(status, message)
 
-
     def _get_policy_by_id(self, policy_id, action_result):
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
 
@@ -527,7 +601,6 @@ class SecureApplicationConnector(BaseConnector):
     # Helper function to delete a rule from configDetails
     # {\"permission\":{\"filter\":[{\"action\":\"DETECT\",\"targetMatch\":      {\"matchType\":\"EQUALS\",\"value\":\"aaaaaaa.exe\"},\"name\":\"detect aaaaaaa.exe\"}]}}
     def _delete_rule_from_config(self, config_dict, rule_to_delete):
-
         filters = config_dict.get("permission", {}).get("filter", [])
         updated_filters = []
         rule_found = False
@@ -751,6 +824,7 @@ class SecureApplicationConnector(BaseConnector):
 
         action_mapping = {
             "create_new_policy": self._handle_create_new_policy,
+            "create_new_policy_for_http_transaction_header": self._handle_create_new_policy_for_http_transaction_header,
             "delete_policy": self._handle_delete_policy,
             "get_policy_by_id": self._handle_get_policy_by_id,
             "list_policies": self._handle_list_policies,

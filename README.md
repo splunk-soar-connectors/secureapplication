@@ -8,6 +8,48 @@ Minimum Product Version: 6.4.0.85
 
 This app interfaces with Secure Application to add, delete and update policies defining what runtime behaviors to ignore, detect, or block. The app connects to the cloud version of Secure Application.
 
+The Secure Application connector supports only the cloud-based version of Secure Application. On-prem deployments are not supported.
+
+Introduction
+
+The Secure Application connector is designed to support the saas-based version of Secure Application, a component of AppDynamics SaaS. Please note that on-premises deployments are not supported.
+
+Prerequisites
+
+Before setting up the Secure Application connector, ensure you meet the following prerequisites:
+• API Client Registration: Register an API client in your AppDynamics Controller tenant with the necessary permissions to execute the public APIs for Secure Application triggered from the SOAR platform.
+• Credentials: Gather the required credentials from your Secure Application console:
+• Client Name: A unique identifier for the API client.
+• Client Secret: A secret string used for authentication.
+
+Procedure
+Asset Configuration
+
+To configure the asset, provide the following information:
+1\. API Key: Enter the client ID of your AppDynamics API client.
+Example: soar_app_test
+2\. API Key Secret: Input the secret associated with the API client.
+Example: 89hsooo768890!
+3\. Base URL: Specify the full URL of your AppDynamics Controller instance.
+Example: https://secureapp-master.cisco.com/
+4\. Account ID: State the account name, which is the first part of the Base URL hostname.
+Example: secureapp-master
+
+OAuth 2.0 Access Token
+
+The SOAR connector for Secure Application uses the provided API key and secret to obtain an OAuth 2.0 access token from the AppDynamics Controller. This token is used for all authenticated API requests and is automatically refreshed upon expiration.
+
+Testing and Saving Configuration
+1\. Test Connectivity: Click "Test Connectivity" to authenticate with the controller and confirm access to Secure Application.
+2\. Save Configuration: Click "Save" to store the configuration.
+
+Reference
+
+Secure Application API Docs for Reference:
+https://help.splunk.com/en/appdynamics-saas/extend-splunk-appdynamics/25.7.0/extend-splunk-appdynamics/splunk-appdynamics-apis/cisco-secure-application-apis
+
+Version: 25.7.0
+
 ### Configuration variables
 
 This table lists the configuration variables required to operate Secure Application. These variables are specified when configuring a Secure Application asset in Splunk SOAR.
@@ -15,7 +57,7 @@ This table lists the configuration variables required to operate Secure Applicat
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **base_url** | required | string | Base URL for accessing Secure Application APIs |
-**account_id** | required | string | Account Name, first part of SAAS URL Host Name, and usually 'customer1' for on premise |
+**account_id** | required | string | Account Name, first part of SAAS URL Host Name |
 **api_key** | required | string | API Key Name |
 **api_key_secret** | required | password | API Key Secret |
 
@@ -23,6 +65,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
 [create new policy](#action-create-new-policy) - Create a policy for an attack or vulnerability at runtime <br>
+[create new policy for http transaction header](#action-create-new-policy-for-http-transaction-header) - Create a policy for headers in HTTP transactions <br>
 [delete policy](#action-delete-policy) - Delete a runtime policy given its ID <br>
 [get policy by id](#action-get-policy-by-id) - Retrieve details of a specific policy using its ID <br>
 [list all policies](#action-list-all-policies) - Fetch and display all existing policies <br>
@@ -57,7 +100,7 @@ Create a policy for an attack or vulnerability at runtime
 Type: **generic** <br>
 Read only: **False**
 
-Create and configure runtime policY to specify an action to mitigate the attacks and vulnerabilities. To create policies, you require the Configure permission for Secure Application. By default, Secure Application includes a runtime policy that provides the best detection of all the attacks and vulnerabilities, reducing the false positives. There can be only one policy of each type for a given combination of application, tier, and tenant.
+Create and configure runtime policy to specify an action to mitigate the attacks and vulnerabilities. To create policies, you require the Configure permission for Secure Application. By default, Secure Application includes a runtime policy that provides the best detection of all the attacks and vulnerabilities, reducing the false positives. There can be only one policy of each type for a given combination of application, tier, and tenant.
 
 #### Action Parameters
 
@@ -91,6 +134,62 @@ action_result.summary.total_objects | numeric | | |
 action_result.summary.total_objects_successful | numeric | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
+
+## action: 'create new policy for http transaction header'
+
+Create a policy for headers in HTTP transactions
+
+Type: **generic** <br>
+Read only: **False**
+
+Create and configure runtime policy to detect or add a specific HTTP header to each HTTP response. The default action is detect. Specify which headers to add with the patch option. To create policies, you require the Configure permission for Secure Application. By default, Secure Application includes a runtime policy that provides the best detection of all the attacks and vulnerabilities, reducing the false positives. There can be only one policy of each type for a given combination of application, tier, and tenant.
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**application_id** | required | Application that includes the tiers or services on which you require to apply the policy. Default value is "all" | string | |
+**tier_id** | required | Application-specific tier to apply the policy. Default value is "all" | string | |
+**default_action** | required | Default action for this policy. You can select IGNORE for no notifications for the runtime activity; select DETECT to detect the runtime activity; select BLOCK to block a specific runtime activity. Default value is "DETECT" | string | |
+**enable_policy** | required | Select Yes/No to enable/disable the policy | string | |
+**action for Strict-Transport-Security** | required | Action for Strict-Transport-Security header. Default value is "DETECT" | string | |
+**patch value for Strict-Transport-Security** | optional | Value to patch for Strict-Transport-Security header. This value is applicable only if the action chosen is "PATCH" | string | |
+**action for X-Frame-Options** | required | Action for X-Frame-Options header. Default value is "DETECT" | string | |
+**patch value for X-Frame-Options** | optional | Value to patch for X-Frame-Options header. This value is applicable only if the action chosen is "PATCH" | string | |
+**action for X-XSS-Protection** | required | Action for X-XSS-Protection header. Default value is "DETECT" | string | |
+**patch value for X-XSS-Protection** | optional | Value to patch for X-XSS-Protection header. This value is applicable only if the action chosen is "PATCH" | string | |
+**action for X-Content-Type-Options** | required | Action for X-Content-Type-Options header. Default value is "DETECT" | string | |
+**patch value for X-Content-Type-Options** | optional | Value to patch for X-Content-Type-Options header. This value is applicable only if the action chosen is "PATCH" | string | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.parameter.application_id | string | | |
+action_result.parameter.tier_id | string | | |
+action_result.parameter.default_action | string | | |
+action_result.parameter.enable_policy | string | | |
+action_result.data.\*.id | string | | |
+action_result.data.\*.status | string | | |
+action_result.data.\*.action | string | | |
+action_result.data.\*.operative_policy_type_id | string | | |
+action_result.data.\*.version | string | | |
+action_result.data.\*.created_at | string | | |
+action_result.data.\*.updated_at | string | | |
+action_result.status | string | | |
+action_result.message | string | | |
+action_result.summary.total_objects | numeric | | |
+action_result.summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
+action_result.parameter.action for Strict-Transport-Security | string | | |
+action_result.parameter.patch value for Strict-Transport-Security | string | | |
+action_result.parameter.action for X-Frame-Options | string | | |
+action_result.parameter.patch value for X-Frame-Options | string | | |
+action_result.parameter.action for X-XSS-Protection | string | | |
+action_result.parameter.patch value for X-XSS-Protection | string | | |
+action_result.parameter.action for X-Content-Type-Options | string | | |
+action_result.parameter.patch value for X-Content-Type-Options | string | | |
 
 ## action: 'delete policy'
 
