@@ -1,12 +1,12 @@
 # Secure Application
 
-Publisher: Cisco Systems <br>
+Publisher: Splunk <br>
 Connector Version: 1.0.0 <br>
-Product Vendor: Cisco <br>
+Product Vendor: Splunk <br>
 Product Name: Secure Application <br>
 Minimum Product Version: 6.4.0.85
 
-This app interfaces with Secure Application to add, delete and update policies defining what runtime behaviors to ignore, detect, or block. The app connects to the cloud version of Secure Application.
+This app provides policy management capabilities for proactive runtime app security
 
 The Secure Application connector supports only the cloud-based version of Secure Application. On-prem deployments are not supported.
 
