@@ -1,7 +1,7 @@
 # Secure Application
 
 Publisher: Splunk <br>
-Connector Version: 1.0.1 <br>
+Connector Version: 1.0.2 <br>
 Product Vendor: Splunk <br>
 Product Name: Secure Application <br>
 Minimum Product Version: 6.4.0.85
