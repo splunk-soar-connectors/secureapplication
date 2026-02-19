@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Splunk Inc.
+# Copyright (c) 2025-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -383,6 +383,7 @@ class SecureApplicationConnector(BaseConnector):
         if not policy_id:
             return action_result.set_status(phantom.APP_ERROR, f"Missing 'policy_id' parameter")
 
+        policy_status = None
         enable_policy = param.get("enable_policy")
         if enable_policy:
             policy_status = "ON" if enable_policy.upper() == "YES" else "OFF"
@@ -693,6 +694,7 @@ class SecureApplicationConnector(BaseConnector):
 
         rule = {"action": action, match_field: {"matchType": match_type, "value": rule_value}, "name": f"{rule_action.lower()} {rule_value}"}
 
+        updated_config = config_details
         if add:
             # Add rule to the json dict retrieved for configDetails
             updated_config = self._append_rule_to_config(config_details, rule)
