@@ -48,9 +48,10 @@ repos:
       - id: mdformat
         exclude: "release_notes/.*"
   - repo: https://github.com/returntocorp/semgrep
-    rev: v1.136.0
+    rev: v1.89.0
     hooks:
       - id: semgrep
+        language_version: python3.9
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0
     hooks:
