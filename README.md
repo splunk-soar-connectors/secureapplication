@@ -60,6 +60,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **account_id** | required | string | Account Name, first part of SAAS URL Host Name |
 **api_key** | required | string | API Key Name |
 **api_key_secret** | required | password | API Key Secret |
+**verify_server_cert** | optional | boolean | Verify server certificate |
 
 ### Supported Actions
 

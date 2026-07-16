@@ -137,7 +137,7 @@ class SecureApplicationConnector(BaseConnector):
         url = self._base_url + endpoint
 
         try:
-            r = request_func(url, verify=config.get("verify_server_cert", False), **kwargs)
+            r = request_func(url, verify=config.get("verify_server_cert", True), **kwargs)
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {e!s}"), resp_json)
 
@@ -783,7 +783,7 @@ class SecureApplicationConnector(BaseConnector):
                 f"{url}/controller/api/oauth/access_token",
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
                 data={"grant_type": "client_credentials", "client_id": f"{api_key}@{account}", "client_secret": api_secret},
-                verify=False,
+                verify=self.get_config().get("verify_server_cert", True),
                 timeout=15,
             )
         except Exception as e:
