@@ -306,7 +306,7 @@ class SecureApplicationConnector(BaseConnector):
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
         headers = self._get_rest_api_headers(token=self._token)
         # REST CALL - delete
-        ret_val, response = self._make_rest_call(endpoint, action_result, headers=headers, method="delete")
+        ret_val, _response = self._make_rest_call(endpoint, action_result, headers=headers, method="delete")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -714,7 +714,7 @@ class SecureApplicationConnector(BaseConnector):
         headers = self._get_rest_api_headers(token=self._token)
         self.debug_print(f"Sending updated policy:\n{json.dumps(existing_policy, indent=2)}")
 
-        ret_val, response = self._make_rest_call(endpoint, action_result, json=existing_policy, headers=headers, method="patch")
+        ret_val, _response = self._make_rest_call(endpoint, action_result, json=existing_policy, headers=headers, method="patch")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
