@@ -18,6 +18,7 @@
 import json
 import time
 
+import encryption_helper
 import phantom.app as phantom
 import requests
 from bs4 import BeautifulSoup
@@ -137,7 +138,7 @@ class SecureApplicationConnector(BaseConnector):
         url = self._base_url + endpoint
 
         try:
-            r = request_func(url, verify=config.get("verify_server_cert", False), **kwargs)
+            r = request_func(url, verify=config.get("verify_server_cert", True), **kwargs)
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {e!s}"), resp_json)
 
@@ -163,6 +164,22 @@ class SecureApplicationConnector(BaseConnector):
             return action_result.get_status()
 
         return action_result.set_status(phantom.APP_SUCCESS, f"Test connectivity successful")
+
+    def _validate_policy_id(self, policy_id, action_result):
+        policy_id = str(policy_id)
+        if not policy_id.isascii() or not policy_id.isdigit() or int(policy_id) < 1:
+            action_result.set_status(phantom.APP_ERROR, f"Invalid 'policy_id' parameter. Expected a positive integer")
+            return None
+        return policy_id
+
+    def _parse_enable_policy(self, enable_policy, action_result):
+        value = str(enable_policy).strip().lower()
+        if value == "yes":
+            return "ON"
+        if value == "no":
+            return "OFF"
+        action_result.set_status(phantom.APP_ERROR, f"Invalid 'enable_policy' parameter. Expected 'Yes' or 'No'")
+        return None
 
     def _handle_create_new_policy(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
@@ -194,7 +211,9 @@ class SecureApplicationConnector(BaseConnector):
         if not policy_type_id:
             return action_result.set_status(phantom.APP_ERROR, f"Unsupported policy type: {policy_type}")
 
-        status = "ON" if enable_policy.upper() == "YES" else "OFF"
+        status = self._parse_enable_policy(enable_policy, action_result)
+        if status is None:
+            return action_result.get_status()
 
         payload = {
             "action": default_action,
@@ -246,7 +265,9 @@ class SecureApplicationConnector(BaseConnector):
             default_action = "NONE"
 
         enable_policy = param["enable_policy"]
-        status = "ON" if enable_policy.upper() == "YES" else "OFF"
+        status = self._parse_enable_policy(enable_policy, action_result)
+        if status is None:
+            return action_result.get_status()
 
         headers_to_check = ["Strict-Transport-Security", "X-Frame-Options", "X-XSS-Protection", "X-Content-Type-Options"]
 
@@ -302,11 +323,14 @@ class SecureApplicationConnector(BaseConnector):
         policy_id = param.get("policy_id")
         if not policy_id:
             return action_result.set_status(phantom.APP_ERROR, f"Missing or empty 'policy_id' parameter")
+        policy_id = self._validate_policy_id(policy_id, action_result)
+        if policy_id is None:
+            return action_result.get_status()
 
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
         headers = self._get_rest_api_headers(token=self._token)
         # REST CALL - delete
-        ret_val, response = self._make_rest_call(endpoint, action_result, headers=headers, method="delete")
+        ret_val, _response = self._make_rest_call(endpoint, action_result, headers=headers, method="delete")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -343,6 +367,7 @@ class SecureApplicationConnector(BaseConnector):
         offset = 0
         all_policies = []
         total = None
+        max_policies = 10000
 
         while True:
             self.debug_print(f"Fetching policies with offset {offset} and limit {limit}")
@@ -355,13 +380,22 @@ class SecureApplicationConnector(BaseConnector):
             if not isinstance(response, dict):
                 return action_result.set_status(phantom.APP_ERROR, f"Unexpected API response format")
             items = response.get("items", [])
-            total = response.get("total", total)
+            if not isinstance(items, list):
+                return action_result.set_status(phantom.APP_ERROR, f"Unexpected policies format in API response")
+            if total is None:
+                total = response.get("total")
 
             self.debug_print(f"Retrieved {len(items)} items, total so far: {len(all_policies)} / {total}")
+            if not items:
+                break
+            if len(all_policies) + len(items) > max_policies:
+                return action_result.set_status(phantom.APP_ERROR, f"Policy listing exceeded the {max_policies} policy limit")
             all_policies.extend(items)
 
             if total is None or len(all_policies) >= total:
                 break
+            if len(all_policies) >= max_policies:
+                return action_result.set_status(phantom.APP_ERROR, f"Policy listing exceeded the {max_policies} policy limit")
 
             offset += limit
 
@@ -384,9 +418,10 @@ class SecureApplicationConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, f"Missing 'policy_id' parameter")
 
         policy_status = None
-        enable_policy = param.get("enable_policy")
-        if enable_policy:
-            policy_status = "ON" if enable_policy.upper() == "YES" else "OFF"
+        if "enable_policy" in param:
+            policy_status = self._parse_enable_policy(param.get("enable_policy"), action_result)
+            if policy_status is None:
+                return action_result.get_status()
 
         # Get existing policy
         status, existing_policy = self._get_policy_by_id(policy_id, action_result)
@@ -558,6 +593,9 @@ class SecureApplicationConnector(BaseConnector):
         return action_result.set_status(status, message)
 
     def _get_policy_by_id(self, policy_id, action_result):
+        policy_id = self._validate_policy_id(policy_id, action_result)
+        if policy_id is None:
+            return action_result.get_status(), None
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
 
         headers = self._get_rest_api_headers(token=self._token)
@@ -714,7 +752,7 @@ class SecureApplicationConnector(BaseConnector):
         headers = self._get_rest_api_headers(token=self._token)
         self.debug_print(f"Sending updated policy:\n{json.dumps(existing_policy, indent=2)}")
 
-        ret_val, response = self._make_rest_call(endpoint, action_result, json=existing_policy, headers=headers, method="patch")
+        ret_val, _response = self._make_rest_call(endpoint, action_result, json=existing_policy, headers=headers, method="patch")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -768,7 +806,20 @@ class SecureApplicationConnector(BaseConnector):
         state = self.get_state()
         current_time = int(time.time())
 
-        token = state.get("access_token")
+        token = None
+        if state.get("is_encrypted") and state.get("access_token"):
+            try:
+                token = encryption_helper.decrypt(state["access_token"], self.get_asset_id())
+            except Exception as e:
+                self.debug_print(f"Unable to decrypt the cached access token: {e!s}")
+                state.pop("access_token", None)
+                state.pop("token_expiry", None)
+                state.pop("is_encrypted", None)
+        elif state.get("access_token"):
+            # Discard legacy cleartext state and mint a new token.
+            state.pop("access_token", None)
+            state.pop("token_expiry", None)
+
         expiry = state.get("token_expiry", 0)
 
         # Reuse token if it's still valid
@@ -783,7 +834,7 @@ class SecureApplicationConnector(BaseConnector):
                 f"{url}/controller/api/oauth/access_token",
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
                 data={"grant_type": "client_credentials", "client_id": f"{api_key}@{account}", "client_secret": api_secret},
-                verify=False,
+                verify=self.get_config().get("verify_server_cert", True),
                 timeout=15,
             )
         except Exception as e:
@@ -804,9 +855,16 @@ class SecureApplicationConnector(BaseConnector):
         # Set new token and expiry with buffer (60 seconds)
         expiry = current_time + int(expires) - 60
 
-        # Save to state
-        state["access_token"] = token
-        state["token_expiry"] = expiry
+        # Save the token encrypted; never fall back to cleartext state.
+        try:
+            state["access_token"] = encryption_helper.encrypt(token, self.get_asset_id())
+            state["token_expiry"] = expiry
+            state["is_encrypted"] = True
+        except Exception as e:
+            self.debug_print(f"Unable to encrypt the access token for state: {e!s}")
+            state.pop("access_token", None)
+            state.pop("token_expiry", None)
+            state.pop("is_encrypted", None)
         self.save_state(state)
         self._token = token
 

@@ -56,6 +56,14 @@
             "order": 3,
             "name": "api_key_secret",
             "id": 3
+        },
+        "verify_server_cert": {
+            "description": "Verify server certificate",
+            "data_type": "boolean",
+            "default": true,
+            "order": 4,
+            "name": "verify_server_cert",
+            "id": 4
         }
     },
     "actions": [
