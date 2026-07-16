@@ -354,6 +354,7 @@ class SecureApplicationConnector(BaseConnector):
         offset = 0
         all_policies = []
         total = None
+        max_policies = 10000
 
         while True:
             self.debug_print(f"Fetching policies with offset {offset} and limit {limit}")
@@ -366,13 +367,22 @@ class SecureApplicationConnector(BaseConnector):
             if not isinstance(response, dict):
                 return action_result.set_status(phantom.APP_ERROR, f"Unexpected API response format")
             items = response.get("items", [])
-            total = response.get("total", total)
+            if not isinstance(items, list):
+                return action_result.set_status(phantom.APP_ERROR, f"Unexpected policies format in API response")
+            if total is None:
+                total = response.get("total")
 
             self.debug_print(f"Retrieved {len(items)} items, total so far: {len(all_policies)} / {total}")
+            if not items:
+                break
+            if len(all_policies) + len(items) > max_policies:
+                return action_result.set_status(phantom.APP_ERROR, f"Policy listing exceeded the {max_policies} policy limit")
             all_policies.extend(items)
 
             if total is None or len(all_policies) >= total:
                 break
+            if len(all_policies) >= max_policies:
+                return action_result.set_status(phantom.APP_ERROR, f"Policy listing exceeded the {max_policies} policy limit")
 
             offset += limit
 
