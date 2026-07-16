@@ -165,6 +165,13 @@ class SecureApplicationConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, f"Test connectivity successful")
 
+    def _validate_policy_id(self, policy_id, action_result):
+        policy_id = str(policy_id)
+        if not policy_id.isascii() or not policy_id.isdigit() or int(policy_id) < 1:
+            action_result.set_status(phantom.APP_ERROR, f"Invalid 'policy_id' parameter. Expected a positive integer")
+            return None
+        return policy_id
+
     def _handle_create_new_policy(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -303,6 +310,9 @@ class SecureApplicationConnector(BaseConnector):
         policy_id = param.get("policy_id")
         if not policy_id:
             return action_result.set_status(phantom.APP_ERROR, f"Missing or empty 'policy_id' parameter")
+        policy_id = self._validate_policy_id(policy_id, action_result)
+        if policy_id is None:
+            return action_result.get_status()
 
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
         headers = self._get_rest_api_headers(token=self._token)
@@ -559,6 +569,9 @@ class SecureApplicationConnector(BaseConnector):
         return action_result.set_status(status, message)
 
     def _get_policy_by_id(self, policy_id, action_result):
+        policy_id = self._validate_policy_id(policy_id, action_result)
+        if policy_id is None:
+            return action_result.get_status(), None
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
 
         headers = self._get_rest_api_headers(token=self._token)
