@@ -172,6 +172,15 @@ class SecureApplicationConnector(BaseConnector):
             return None
         return policy_id
 
+    def _parse_enable_policy(self, enable_policy, action_result):
+        value = str(enable_policy).strip().lower()
+        if value == "yes":
+            return "ON"
+        if value == "no":
+            return "OFF"
+        action_result.set_status(phantom.APP_ERROR, f"Invalid 'enable_policy' parameter. Expected 'Yes' or 'No'")
+        return None
+
     def _handle_create_new_policy(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -202,7 +211,9 @@ class SecureApplicationConnector(BaseConnector):
         if not policy_type_id:
             return action_result.set_status(phantom.APP_ERROR, f"Unsupported policy type: {policy_type}")
 
-        status = "ON" if enable_policy.upper() == "YES" else "OFF"
+        status = self._parse_enable_policy(enable_policy, action_result)
+        if status is None:
+            return action_result.get_status()
 
         payload = {
             "action": default_action,
@@ -254,7 +265,9 @@ class SecureApplicationConnector(BaseConnector):
             default_action = "NONE"
 
         enable_policy = param["enable_policy"]
-        status = "ON" if enable_policy.upper() == "YES" else "OFF"
+        status = self._parse_enable_policy(enable_policy, action_result)
+        if status is None:
+            return action_result.get_status()
 
         headers_to_check = ["Strict-Transport-Security", "X-Frame-Options", "X-XSS-Protection", "X-Content-Type-Options"]
 
@@ -405,9 +418,10 @@ class SecureApplicationConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, f"Missing 'policy_id' parameter")
 
         policy_status = None
-        enable_policy = param.get("enable_policy")
-        if enable_policy:
-            policy_status = "ON" if enable_policy.upper() == "YES" else "OFF"
+        if "enable_policy" in param:
+            policy_status = self._parse_enable_policy(param.get("enable_policy"), action_result)
+            if policy_status is None:
+                return action_result.get_status()
 
         # Get existing policy
         status, existing_policy = self._get_policy_by_id(policy_id, action_result)
