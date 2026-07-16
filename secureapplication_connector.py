@@ -18,6 +18,7 @@
 import json
 import time
 
+import encryption_helper
 import phantom.app as phantom
 import requests
 from bs4 import BeautifulSoup
@@ -768,7 +769,20 @@ class SecureApplicationConnector(BaseConnector):
         state = self.get_state()
         current_time = int(time.time())
 
-        token = state.get("access_token")
+        token = None
+        if state.get("is_encrypted") and state.get("access_token"):
+            try:
+                token = encryption_helper.decrypt(state["access_token"], self.get_asset_id())
+            except Exception as e:
+                self.debug_print(f"Unable to decrypt the cached access token: {e!s}")
+                state.pop("access_token", None)
+                state.pop("token_expiry", None)
+                state.pop("is_encrypted", None)
+        elif state.get("access_token"):
+            # Discard legacy cleartext state and mint a new token.
+            state.pop("access_token", None)
+            state.pop("token_expiry", None)
+
         expiry = state.get("token_expiry", 0)
 
         # Reuse token if it's still valid
@@ -804,9 +818,16 @@ class SecureApplicationConnector(BaseConnector):
         # Set new token and expiry with buffer (60 seconds)
         expiry = current_time + int(expires) - 60
 
-        # Save to state
-        state["access_token"] = token
-        state["token_expiry"] = expiry
+        # Save the token encrypted; never fall back to cleartext state.
+        try:
+            state["access_token"] = encryption_helper.encrypt(token, self.get_asset_id())
+            state["token_expiry"] = expiry
+            state["is_encrypted"] = True
+        except Exception as e:
+            self.debug_print(f"Unable to encrypt the access token for state: {e!s}")
+            state.pop("access_token", None)
+            state.pop("token_expiry", None)
+            state.pop("is_encrypted", None)
         self.save_state(state)
         self._token = token
 
