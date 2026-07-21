@@ -330,13 +330,18 @@ class SecureApplicationConnector(BaseConnector):
         endpoint = POLICYCONFIGS_ENDPOINT_PREFIX + f"/{policy_id}"
         headers = self._get_rest_api_headers(token=self._token)
         # REST CALL - delete
-        ret_val, _response = self._make_rest_call(endpoint, action_result, headers=headers, method="delete")
+        ret_val, response = self._make_rest_call(endpoint, action_result, headers=headers, method="delete")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        action_result.add_data({"message": "Policy deleted successfully", "policy_id": policy_id})
-        return action_result.set_status(phantom.APP_SUCCESS, f"Policy deleted successfully.")
+        if isinstance(response, dict) and (response.get("success") is False or response.get("deleted") == 0 or response.get("error")):
+            action_result.add_data(response)
+            message = response.get("message") or "Secure Application did not confirm policy deletion"
+            return action_result.set_status(phantom.APP_ERROR, message)
+
+        action_result.add_data(response or {"policy_id": policy_id})
+        return action_result.set_status(phantom.APP_SUCCESS, "Policy deleted successfully.")
 
     def _handle_get_policy_by_id(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
