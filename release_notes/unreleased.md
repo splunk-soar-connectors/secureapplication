@@ -1,3 +1,1 @@
 **Unreleased**
-
-* Derive delete-policy results from the controller response and fail when it explicitly rejects the deletion.
