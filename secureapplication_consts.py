@@ -13,5 +13,6 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 
+DEFAULT_REQUEST_TIMEOUT = 30
 ENDPOINT_PREFIX = "/controller/argento/public-api/v1/"
 POLICYCONFIGS_ENDPOINT_PREFIX = "/controller/argento/public-api/v1/policyConfigs"

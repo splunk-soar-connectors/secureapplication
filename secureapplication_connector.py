@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from secureapplication_consts import ENDPOINT_PREFIX, POLICYCONFIGS_ENDPOINT_PREFIX
+from secureapplication_consts import DEFAULT_REQUEST_TIMEOUT, ENDPOINT_PREFIX, POLICYCONFIGS_ENDPOINT_PREFIX
 
 
 class RetVal(tuple):
@@ -136,6 +136,7 @@ class SecureApplicationConnector(BaseConnector):
 
         # Create a URL to connect to
         url = self._base_url + endpoint
+        kwargs.setdefault("timeout", DEFAULT_REQUEST_TIMEOUT)
 
         try:
             r = request_func(url, verify=config.get("verify_server_cert", True), **kwargs)
