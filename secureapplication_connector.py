@@ -851,8 +851,11 @@ class SecureApplicationConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             raise Exception(f"Token request failed: {action_result.get_message()}")
 
+        if not isinstance(r_json, dict):
+            raise Exception("Token request failed: expected a JSON object")
+
         # Get token and calculate its expiration time
-        token = r_json["access_token"]
+        token = r_json.get("access_token")
         expires = r_json.get("expires_in", 1800)
         if not token:
             raise Exception(f"Token response received, but access_token is missing")
