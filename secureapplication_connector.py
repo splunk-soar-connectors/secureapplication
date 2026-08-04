@@ -667,7 +667,9 @@ class SecureApplicationConnector(BaseConnector):
             delete_rule_filter = rule_to_delete.get(match_field, {})
 
             if (
-                rule.get("action") == rule_to_delete.get("action")
+                not rule_found
+                and rule.get("action") == rule_to_delete.get("action")
+                and rule.get("name") == rule_to_delete.get("name")
                 and rule_filter.get("matchType") == delete_rule_filter.get("matchType")
                 and rule_filter.get("value") == delete_rule_filter.get("value")
             ):
