@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from secureapplication_consts import ENDPOINT_PREFIX, POLICYCONFIGS_ENDPOINT_PREFIX
+from secureapplication_consts import DEFAULT_REQUEST_TIMEOUT, ENDPOINT_PREFIX, POLICYCONFIGS_ENDPOINT_PREFIX
 
 
 class RetVal(tuple):
@@ -136,6 +136,7 @@ class SecureApplicationConnector(BaseConnector):
 
         # Create a URL to connect to
         url = self._base_url + endpoint
+        kwargs.setdefault("timeout", DEFAULT_REQUEST_TIMEOUT)
 
         try:
             r = request_func(url, verify=config.get("verify_server_cert", True), **kwargs)
@@ -667,7 +668,9 @@ class SecureApplicationConnector(BaseConnector):
             delete_rule_filter = rule_to_delete.get(match_field, {})
 
             if (
-                rule.get("action") == rule_to_delete.get("action")
+                not rule_found
+                and rule.get("action") == rule_to_delete.get("action")
+                and rule.get("name") == rule_to_delete.get("name")
                 and rule_filter.get("matchType") == delete_rule_filter.get("matchType")
                 and rule_filter.get("value") == delete_rule_filter.get("value")
             ):
@@ -851,8 +854,11 @@ class SecureApplicationConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             raise Exception(f"Token request failed: {action_result.get_message()}")
 
+        if not isinstance(r_json, dict):
+            raise Exception("Token request failed: expected a JSON object")
+
         # Get token and calculate its expiration time
-        token = r_json["access_token"]
+        token = r_json.get("access_token")
         expires = r_json.get("expires_in", 1800)
         if not token:
             raise Exception(f"Token response received, but access_token is missing")
